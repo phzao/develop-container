@@ -8,18 +8,18 @@ RUN apk --no-cache add zip unzip git nodejs xfce4-dev-tools build-base zsh tmux 
   cmake \
   && rm -rf /var/cache/apk/*
 
-ENV     UID="1000" \
-        GID="1000" \
-        UNAME="dev" \
-        GNAME="dev" \
-        SHELL="/bin/bash" \
-        WORKSPACE="/development" \
-        USERSPACE="/home/dev" \
-        NVIM_CONFIG="/home/dev/.config/nvim" \
-	      NVIM_PCK="/home/dev/.local/share/nvim/site/pack" \
-	      ENV_DIR="/home/dev/.local/share/vendorvenv" \
-	      NVIM_PROVIDER_PYLIB="python3_neovim_provider" \
-	      PATH="/home/dev/.local/bin:${PATH}"
+ENV UID="1000" \
+	GID="1000" \
+	UNAME="dev" \
+	GNAME="dev" \
+	SHELL="/bin/bash" \
+	WORKSPACE="/development" \
+	USERSPACE="/home/dev" \
+	NVIM_CONFIG="/home/dev/.config/nvim" \
+	NVIM_PCK="/home/dev/.local/share/nvim/site/pack" \
+	ENV_DIR="/home/dev/.local/share/vendorvenv" \
+	NVIM_PROVIDER_PYLIB="python3_neovim_provider" \
+	PATH="/home/dev/.local/bin:${PATH}"
 
 # python 
 ENV PYTHONUNBUFFERED=1

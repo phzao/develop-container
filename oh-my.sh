@@ -42,11 +42,6 @@ mv 10-powerline-symbols.conf $USERSPACE/.config/fontconfig/conf.d/10-powerline-s
 
 chown -R dev:dev .config .zshrc .tmux.conf .local
 
-if ! curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
-then
-  echo "NVM installed"
-else
-  echo "NVM Error"
-fi
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
 
 pip install --user neovim
