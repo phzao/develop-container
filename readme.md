@@ -57,7 +57,7 @@ Installing plugins on Neovim:
 
   >  Will be installed all plugins
 
-To clone your projects, you can do this on the local host or directly in your container, of your choice. If you want to do this in the container and use the ssh keys, you will need to configure it.
+To clone your projects, you can do this on the local host or directly in your container, you choose. If you want to do this in the container and use the ssh keys, you will need to configure it.
  
 ## Using NodeJs with debug
 
