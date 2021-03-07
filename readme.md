@@ -1,6 +1,6 @@
 # JS Development Machine!
 
-This container is ready to development using:
+This container is ready for development using:
 
 - Alpine 3.12
 - Python3
@@ -12,28 +12,29 @@ This container is ready to development using:
 - oh-my-zsh and plugins:
   > autosuggestions, autojump, completions, highlighting,
 
-Stop installing and configuring your tools to development every time you change your computer, with this, your local machine don't need NodeJs and packages, Vim and plugins, Bash plugins and commands anymore.
+Stop installing and configuring your development tools every time you change computers, so your local machine will no longer need NodeJs, Python, Vim and custom Terminals.
+
 # Starting
 
-Let's start. I will clone this project inside my development folder:
+Let's start. I will clone this project into my development folder:
   > /Users/phz
 
 Add this repo
   > $ git clone git@github.com:phzao/develop-container.git
 
-Now will be this way:
+Now it will be like this:
   > /Users/phz/develo-container
 
-I will rename the folder project to 'development':
+I will rename the project folder to 'development':
   > /Users/phz/development
 
 Build:
   > $ docker-compose up --build -d
 
-Go to container:
+Accessing:
   > $ docker exec -it -u dev development-machine zsh
 
-The container start inside the '/development' and is the shared folder with the your local host:
+The container starts within '/ development' and is the folder shared with your local host. Everything you put in that folder will be accessible in the container:
   > /Users/phz/development  = /development
 
 Inside this folder I will add all my projects:
@@ -48,11 +49,11 @@ Installing plugins on Neovim:
   >  type :PlugInstall
   >  Will be installed all plugins
 
-To clone your projects you can do that on the local host or directly on your container, your choice. If do you want do that on container and you use ssh keys then you will need to configure it.
+To clone your projects, you can do this on the local host or directly in your container, of your choice. If you want to do this in the container and use the ssh keys, you will need to configure it.
  
 ## Using NodeJs with debug
 
-First of all, let me show some shortcuts:
+First, let me show you a few shortcuts:
 >  Ctrl + C to go to command line and \do (start)
 >  Ctrl + C to go to command line and \dbp (add a breakpoint)
 >  Ctrl + C to go to command line and \dl (step into)
@@ -61,10 +62,12 @@ First of all, let me show some shortcuts:
 >  Ctrl + C to go to command line and \d_ (restart)
 >  Ctrl + C to go to command line and \ds (stop)
 
-When the debug is started the first time they will install vscode-plugin and after that, you will asked two questions, only answer the default and done. If your project is an API try starting the debug and go to the route using 'Postman' to see how it works.
+When the debug is started for the first time they will install vscode-plugin and after that, you will ask two questions, just answer the pattern and that's it. If your project is an API try to start debugging and go to the route using 'Postman' to see how it works.
 
 ## Tips
 
-Try find some in your Project using nvim with:
+Try to find something in your project using nvim with:
   >  Ctrl + C and \ps and type what you want to see what's happen
+
+I will add some tips later..
 
