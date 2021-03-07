@@ -59,13 +59,14 @@ RUN	apk --no-cache add \
 	&& curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | sudo -u dev python3 \ 
   && sudo -u dev pipsi install python-language-server
 
-RUN apk add --no-cache zsh-vcs openssh-keygen pcre-dev xz-dev g++
+RUN apk add --no-cache zsh-vcs openssh-keygen pcre-dev xz-dev g++ npm
 RUN sudo -u dev sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 COPY .zshrc ${USERSPACE}/.zshrc
 COPY .tmux.conf ${USERSPACE}/.tmux.conf
 COPY init.vim ${NVIM_CONFIG}/init.vim
 COPY oh-my.sh ${USERSPACE}/oh-my.sh
+
 RUN chmod +x ${USERSPACE}/oh-my.sh
 RUN cd ${USERSPACE}
 RUN chown -R dev:dev ${USERSPACE}
@@ -83,10 +84,23 @@ RUN git clone https://github.com/neovim/neovim.git && \
 ENV PATH="/home/dev/neovim/bin:$PATH"
 
 RUN chown -R dev:dev /usr/lib/node_modules
-RUN pip install --user neovim
 
-RUN git clone https://github.com/ggreer/the_silver_searcher.git && \
+RUN git clone https://github.com/ggreer/the_silver_searcher.git
+RUN chown -R dev:dev ${USERSPACE}  &&\
     cd the_silver_searcher && \
-	./build.sh
+	./build.sh && \
+	make install
+
+RUN cd ${USERSPACE} && \
+     cd .nvm && \
+	 chmod +x nvm.sh && \
+	 ./nvm.sh
+
+RUN git clone https://github.com/universal-ctags/ctags.git && \
+      cd ctags && \
+	  ./autogen.sh && \
+	  ./configure && \
+	  make && \
+	  make install
 
 ENTRYPOINT ["/bin/zsh"]

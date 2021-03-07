@@ -103,7 +103,7 @@ POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="$p"
 
 POWERLEVEL9K_NVM_BACKGROUND=none
 POWERLEVEL9K_NVM_FOREGROUND=green
-POWERLEVEL9K_NODE_ICON='%fvia %F{green}⬢'
+POWERLEVEL9K_NODE_ICON='%f at %F{green}⬢'
 
 ############ END- POWERLEVEL THEME SETTINGS ##############
 
@@ -223,11 +223,6 @@ alias fopen="xdg-open"
 # The next line enables shell command completion for gcloud.
 # if [ -f '$HOME/Downloads/software/google-cloud-sdk-164.0.0-linux-x86_64/google-cloud-sdk/completion.zsh.inc' ]; then source '$HOME/Downloads/software/google-cloud-sdk-164.0.0-linux-x86_64/google-cloud-sdk/completion.zsh.inc'; fi
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 # export SDKMAN_DIR="$HOME/.sdkman"
 # [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
@@ -237,11 +232,11 @@ export NVM_DIR="$HOME/.nvm"
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 [[ -s /home/dev/.autojump/etc/profile.d/autojump.sh ]] && source /home/dev/.autojump/etc/profile.d/autojump.sh
 autoload -U compinit && compinit -U
 
 #fpath=(/usr/share/zsh/5.4.2/functions $fpath)
-export PATH=$HOME/.npm-global/bin:$PATH
-source ~/.zshrc
+#export PATH=$HOME/.npm-global/bin:$PATH
+#source ~/.zshrc

@@ -48,3 +48,5 @@ then
 else
   echo "NVM Error"
 fi
+
+pip install --user neovim
