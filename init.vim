@@ -89,7 +89,7 @@ nnoremap <leader>d<space> :call vimspector#Continue()<CR>
 
 nmap <leader>dl <Plug>VimspectorStepInto
 nmap <leader>dj <Plug>VimspectorStepOver
-nmap <leader>dj <Plug>VimspectorStepOut
+nmap <leader>djo <Plug>VimspectorStepOut
 nmap <leader>drc <Plug>VimspectorRunToCursor
 nmap <leader>dbp <Plug>VimspectorToggleBreakpoint
 nmap <leader>dcbp <Plug>VimspectorToggleConditionalBreakpoint
