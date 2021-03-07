@@ -1,9 +1,9 @@
-FROM alpine:3.7
+FROM alpine:3.12
 
 WORKDIR /home/dev
 
 RUN apk --no-cache add zip unzip git nodejs xfce4-dev-tools build-base zsh tmux \
-  alpine-sdk libtool automake m4 autoconf linux-headers tini \
+  alpine-sdk libtool automake m4 autoconf linux-headers tini ripgrep \
   make fontconfig \
   cmake \
   && rm -rf /var/cache/apk/*
@@ -59,7 +59,7 @@ RUN	apk --no-cache add \
 	&& curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | sudo -u dev python3 \ 
   && sudo -u dev pipsi install python-language-server
 
-RUN apk add --no-cache zsh-vcs openssh-keygen
+RUN apk add --no-cache zsh-vcs openssh-keygen pcre-dev xz-dev g++
 RUN sudo -u dev sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 COPY .zshrc ${USERSPACE}/.zshrc
@@ -82,8 +82,11 @@ RUN git clone https://github.com/neovim/neovim.git && \
 
 ENV PATH="/home/dev/neovim/bin:$PATH"
 
-RUN cd ${USERSPACE} && source .zshrc
-
 RUN chown -R dev:dev /usr/lib/node_modules
+RUN pip install --user neovim
+
+RUN git clone https://github.com/ggreer/the_silver_searcher.git && \
+    cd the_silver_searcher && \
+	./build.sh
 
 ENTRYPOINT ["/bin/zsh"]

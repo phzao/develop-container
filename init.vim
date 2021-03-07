@@ -30,8 +30,6 @@ set hlsearch
 set tabstop=2 softtabstop=2
 set shiftwidth=2
 
-set completeopt=menuone,noinsert,noselect
-set shortmess+=c
 set signcolumn=yes
 
 set updatetime=50
@@ -45,15 +43,15 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'gruvbox-community/gruvbox'
 
-Plug 'neovim/nvim-lspconfig'
+Plug 'ludovicchabant/vim-gutentags'
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'dyng/ctrlsf.vim'
 
 Plug 'preservim/nerdcommenter'
 
 Plug 'mbbill/undotree'
-
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'jiangmiao/auto-pairs'
 
@@ -111,6 +109,21 @@ let g:closetag_xhtml_filenames = '*.jsx,*.js'
 let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
 let g:closetag_close_shortcut = '<leader>>'
+"add numbers to explorer
+let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
+let g:netrw_keepdir=0
+
+let g:javascript_plugin_jsdoc = 1
+let g:javascript_plugin_flow = 1
+
+" Don't resize automatically.
+let g:golden_ratio_autocommand = 0
+
+" Mnemonic: - is next to =, but instead of resizing equally, all windows are
+" resized to focus on the current.
+nmap <C-w>- <Plug>(golden_ratio_resize)
+" Fill screen with current window.
+nnoremap <C-w>+ <C-w><Bar><C-w>_
 
 let g:gutentags_cache_dir = '~/.vim/gutentags'
 
@@ -119,17 +132,6 @@ let g:gutentags_ctages_exclude = ['*.css', '*.html', '*.js', '*.json', '*.xml',
             \ '*vendor/*/test*', '*vendor/*/Test*',
             \ '*vendor/*/fixture*', '*vendor/*/Fixture*',
             \ '*var/cache*', '*var/log*']
-
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
 
 " Use <c-space> to trigger completion.
 if has('nvim')
@@ -170,24 +172,95 @@ endfunction
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
-"ymbol renaming.
+" Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
 
-"add numbers to explorer
-let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
-let g:netrw_keepdir=0
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
 
-let g:javascript_plugin_jsdoc = 1
-let g:javascript_plugin_flow = 1
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder.
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
 
-let g:python3_host_prog = expand('~/.pyenv/versions/3.9.0/bin')
-let g:python_host_prog = expand('~/.pyenv/versions/versions/2.7.16/bin')
+" Applying codeAction to the selected region.
+" Example: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
 
-" Don't resize automatically.
-let g:golden_ratio_autocommand = 0
+" Remap keys for applying codeAction to the current buffer.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
 
-" Mnemonic: - is next to =, but instead of resizing equally, all windows are
-" resized to focus on the current.
-nmap <C-w>- <Plug>(golden_ratio_resize)
-" Fill screen with current window.
-nnoremap <C-w>+ <C-w><Bar><C-w>_
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Remap <C-f> and <C-b> for scroll float windows/popups.
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
+
+" Use CTRL-S for selections ranges.
+" Requires 'textDocument/selectionRange' support of language server.
+nmap <silent> <C-s> <Plug>(coc-range-select)
+xmap <silent> <C-s> <Plug>(coc-range-select)
+
+" Add `:Format` command to format current buffer.
+command! -nargs=0 Format :call CocAction('format')
+
+" Add `:Fold` command to fold current buffer.
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" Add `:OR` command for organize imports of the current buffer.
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+" Add (Neo)Vim's native statusline support.
+" NOTE: Please see `:h coc-status` for integrations with external plugins that
+" provide custom statusline: lightline.vim, vim-airline.
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+" Mappings for CoCList
+" Show all diagnostics.
+nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+" Manage extensions.
+nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+" Show commands.
+nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+" Find symbol of current document.
+nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols.
+nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+" Resume latest coc list.
+nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
+set listchars=
+"set listchars+=tab:𐄙\ 
+set listchars+=tab:\ \ 
+set listchars+=trail:·
+set listchars+=extends:»
+set listchars+=precedes:«
+set listchars+=nbsp:⣿
+
+set statusline+=%F\ %r\ %r\ Line:[%l]\:Column[%c]

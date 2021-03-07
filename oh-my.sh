@@ -48,6 +48,3 @@ then
 else
   echo "NVM Error"
 fi
-
-nvm install 12.21.0
-nvm alias default 12.21.0
