@@ -41,14 +41,20 @@ The container starts within '/ development' and is the folder shared with your l
 
 Inside this folder I will add all my projects:
 > /Users/phz/development
+
 > ------project1
+
 > ------project2
+
 > ------project3 
 
 Installing plugins on Neovim:
   > $ nvim .
+
   >  after open press Ctrl + C
+
   >  type :PlugInstall
+
   >  Will be installed all plugins
 
 To clone your projects, you can do this on the local host or directly in your container, of your choice. If you want to do this in the container and use the ssh keys, you will need to configure it.
@@ -57,11 +63,17 @@ To clone your projects, you can do this on the local host or directly in your co
 
 First, let me show you a few shortcuts:
 >  Ctrl + C to go to command line and \do (start)
+
 >  Ctrl + C to go to command line and \dbp (add a breakpoint)
+
 >  Ctrl + C to go to command line and \dl (step into)
+
 >  Ctrl + C to go to command line and \dj (step over)
+
 >  Ctrl + C to go to command line and \djo (step out)
+
 >  Ctrl + C to go to command line and \d_ (restart)
+
 >  Ctrl + C to go to command line and \ds (stop)
 
 When the debug is started for the first time they will install vscode-plugin and after that, you will ask two questions, just answer the pattern and that's it. If your project is an API try to start debugging and go to the route using 'Postman' to see how it works.
