@@ -8,6 +8,7 @@ This container is ready for development using:
 - Neovim and plugins to Js like
   >  Telescope, plenary, popup, ctrlsf, auto-pairs, closetag, vimspector, jsx-pretty, ctags
  
+- The silver search, RipGrep(rg)
 - tmux
 - oh-my-zsh and plugins:
   > autosuggestions, autojump, completions, highlighting,
