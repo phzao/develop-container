@@ -61,6 +61,26 @@ To clone your projects, you can do this on the local host or directly in your co
  
 ## Using NodeJs with debug
 
+You will need add a .vimspector.json file in your root project. My project on netlify using nodejs has the follow configurations:
+
+````JSON
+{
+	"configurations": {
+		"run": {
+			"adapter": "vscode-node",
+			"configuration" : {
+				"request": "launch",
+				"protocol": "auto",
+				"stopOnEntry": false,
+				"console": "integratedTerminal",
+				"program": "${workspaceRoot}/src/api.js",
+				"cwd": "${workspaceRoot}"
+			}
+		}
+	}
+}
+````
+
 First, let me show you a few shortcuts:
 >  Ctrl + C to go to command line and \do (start)
 
