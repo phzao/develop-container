@@ -4,7 +4,7 @@ This container is ready for development using:
 
 - Alpine 3.12
 - Python3
-- NodeJs (nvm, npm)
+- NodeJs (nvm, npm, npx)
 - Neovim and plugins to Js like
   >  Telescope, plenary, popup, ctrlsf, auto-pairs, closetag, vimspector, jsx-pretty, ctags
  
@@ -13,6 +13,8 @@ This container is ready for development using:
   > autosuggestions, autojump, completions, highlighting,
 
 Stop installing and configuring your development tools every time you change computers, so your local machine will no longer need NodeJs, Python, Vim and custom Terminals.
+
+I use to NodeJs and ReactJs projects.
 
 # Starting
 
