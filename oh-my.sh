@@ -9,7 +9,7 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 #install tools
-mkdir -p $USERSPACE/.oh-my-zsh/custom/plugins 
+mkdir -p $USERSPACE/.oh-my-zsh/custom/plugins
 git clone https://github.com/zsh-users/zsh-autosuggestions $USERSPACE/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $USERSPACE/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search
@@ -45,3 +45,6 @@ chown -R dev:dev .config .zshrc .tmux.conf .local
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
 
 pip install --user neovim
+
+#tmux custom
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
