@@ -116,6 +116,13 @@ let g:closetag_close_shortcut = '<leader>>'
 "add numbers to explorer
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 let g:netrw_keepdir=0
+let g:netrw_banner = 0
+let g:netrw_browse_split = 1
+let g:netrw_winsize = 25
+augroup ProjectDrawer
+  autocmd!
+  autocmd VimEnter * :Vexplore
+augroup END
 
 let g:javascript_plugin_jsdoc = 1
 let g:javascript_plugin_flow = 1
@@ -159,3 +166,5 @@ inoremap <silent><expr> <Tab>
 inoremap <silent><expr> <c-space> coc#refresh()
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+
