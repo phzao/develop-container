@@ -36,9 +36,9 @@ conky.config = {
 	text_buffer_size = 32768,
 	imlib_cache_size = 0,
 	own_window = true,
-	own_window_type = 'normal',
 	own_window_argb_visual = true,
 	own_window_argb_value = 50,
+	own_window_type = 'panel',
 	own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
 	border_inner_margin = 5,
 	border_outer_margin = 0,
@@ -69,7 +69,7 @@ ${font sans-serif:normal:size=8}$sysname $kernel $alignr $machine
 Uptime:$alignr$uptime
 Processes: $alignr ${execi 1000 ps aux | wc -l}
 
-${font sans-serif:bold:size=10}CPU 12 threads ${hr 2}
+${font sans-serif:bold:size=10}CPU ${exec nproc --all} threads ${hr 2}
 ${font sans-serif:normal:size=8}${execi 1000 grep model /proc/cpuinfo | cut -d : -f2 | tail -1 | sed 's/\s//'}
 ${font sans-serif:normal:size=9}
 CPU 1: ${cpu cpu1}% ${cpubar cpu1}
