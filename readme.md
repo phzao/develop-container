@@ -7,7 +7,7 @@ This container is ready for development using:
 - NodeJs (nvm, npm, npx)
 - Neovim and plugins to Js like
   >  Telescope, plenary, popup, ctrlsf, auto-pairs, closetag, vimspector, jsx-pretty, ctags
- 
+
 - The silver search, RipGrep(rg)
 - tmux
 - oh-my-zsh and plugins:
@@ -47,7 +47,7 @@ Inside this folder I will add all my projects:
 
 > ------project2
 
-> ------project3 
+> ------project3
 
 Installing plugins on Neovim:
   > $ nvim .
@@ -59,7 +59,7 @@ Installing plugins on Neovim:
   >  Will be installed all plugins
 
 To clone your projects, you can do this on the local host or directly in your container, you choose. If you want to do this in the container and use the ssh keys, you will need to configure it.
- 
+
 ## Using NodeJs with debug
 
 You will need add a .vimspector.json file in your root project. My project on netlify using nodejs has the follow configurations:
@@ -103,6 +103,10 @@ When the debug is started for the first time they will install vscode-plugin and
 
 Try to find something in your project using nvim with:
   >  Ctrl + C and \ps and type what you want to see what's happen
+
+> convert word from lower case to upper case: Ctrl + c gU$
+
+> convert all content from { a, b, c.. } to upper case: Ctrl + c gUi{
 
 I will add some tips later..
 

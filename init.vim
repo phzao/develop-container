@@ -10,6 +10,11 @@ set splitright
 set relativenumber
 set scrolloff=8
 set cmdheight=2
+let g:closetag_filenames = "*.jsx,*.js"
+let g:closetag_xhtml_filenames = '*.jsx,*.js'
+let g:closetag_emptyTags_caseSensitive = 1
+let g:closetag_shortcut = '>'
+let g:closetag_close_shortcut = '<leader>>'
 set laststatus=2
 set noswapfile
 set nu
@@ -61,16 +66,9 @@ Plug 'preservim/nerdcommenter'
 
 Plug 'mbbill/undotree'
 
-Plug 'jiangmiao/auto-pairs'
-
-Plug 'alvan/vim-closetag'
-
 Plug 'tpope/vim-fugitive'
 
 Plug 'puremourning/vimspector'
-
-Plug 'yuezk/vim-js'
-Plug 'maxmellon/vim-jsx-pretty'
 
 Plug 'vim-airline/vim-airline'
 
@@ -79,6 +77,9 @@ Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 Plug 'jremmen/vim-ripgrep'
 
 Plug 'ycm-core/YouCompleteMe', { 'do': function('BuildYCM'), 'for': ['go', 'javascript', 'PHP']}
+
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} 
+Plug 'nvim-treesitter/playground'
 
 call plug#end()
 let mapleader = " "
@@ -107,9 +108,10 @@ let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 nnoremap <leader>ps :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
 
 nmap <leader>do :call vimspector#Launch()<CR>
-nnoremap <leader>d<space> :call vimspector#Continue()<CR>
+"nnoremap <leader>dco<space> :call vimspector#Continue()<CR>
 
 nmap <leader>dl <Plug>VimspectorStepInto
+nmap <leader>dco <Plug>VimspectorContinue
 nmap <leader>dj <Plug>VimspectorStepOver
 nmap <leader>djo <Plug>VimspectorStepOut
 nmap <leader>drc <Plug>VimspectorRunToCursor
@@ -128,11 +130,6 @@ if !empty(glob("/bin/zsh"))
 endif
 set nocompatible
 
-let g:closetag_filenames = "*.jsx,*.js"
-let g:closetag_xhtml_filenames = '*.jsx,*.js'
-let g:closetag_emptyTags_caseSensitive = 1
-let g:closetag_shortcut = '>'
-let g:closetag_close_shortcut = '<leader>>'
 "add numbers to explorer
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 let g:netrw_keepdir=0
@@ -155,16 +152,21 @@ nnoremap <C-w>+ <C-w><Bar><C-w>_
 let g:vim_jsx_pretty_colorful_config = 1
 
 lua require'lspconfig'.tsserver.setup{}
-augroup highlight_yank
-    autocmd!
-    autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank({timeout = 40})
-augroup END
 
-augroup THE_PRIMEAGEN
-    autocmd!
-    autocmd BufWritePre * %s/\s\+$//e
-    autocmd BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{}
-augroup END
+lua require'nvim-treesitter.configs'.setup{
+  \ highlight = {
+  \   enable = true,
+  \   custom_captures = {
+  \     ["foo.bar"] = "Identifier",
+  \     ["foo"] = "Object_pattern",
+  \   },
+  \ },
+  \textobjects = { enable = true },
+  \incremental_selection = { enable = true },
+  \indent = {
+  \  enable = true
+  \ }
+\}
 
 nnoremap <C-p> :lua require('telescope.builtin').git_files()<CR>
 nnoremap <Leader>pf :lua require('telescope.builtin').find_files()<CR>
@@ -179,11 +181,25 @@ nnoremap <leader>Y gg"+yG
 
 nnoremap <leader>h :vsplit<CR>
 nnoremap <leader>k :split<CR>
-nnoremap <leader>z :Prettier<CR>
 nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
 nnoremap <leader>undo :UndotreeToggle<CR>
-nnoremap <silent> <leader>gd :YcmCompleter GoTo<CR>
-nnoremap <silent> <leader>gf :YcmCompleter FixIt<CR>
+nnoremap <silent> <leader>goto :YcmCompleter GoTo<CR>
+nnoremap <silent> <leader>gdef :YcmCompleter GoToDefinition<CR>
+nnoremap <silent> <leader>gref :YcmCompleter GoToReferences<CR>
 let g:ycm_always_populate_location_list = 1
 "caso nao mostrar problemas rodar
 " lua vim.lsp.stop_client(vim.lsp.get_active_clients())
+set runtimepath^=~/.vim/bundle/ctrlp.vim
+
+let g:ctrlp_cmd = 'CtrlP'
+nnoremap <Leader>lk :CtrlP<CR>
+set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
+let g:ctrlp_working_path_mode = 'ra'
+nnoremap <Leader>sv :w<CR>
+nnoremap <Leader>nv :q!<CR>
+nnoremap <Leader>ls :wqa!<CR>
+nnoremap <Leader>ln :qa!<CR>
+nnoremap <Leader>nh :noh<CR>
+
+highlight default link TSVariable Special 
