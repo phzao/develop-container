@@ -10,11 +10,6 @@ set splitright
 set relativenumber
 set scrolloff=8
 set cmdheight=2
-let g:closetag_filenames = "*.jsx,*.js"
-let g:closetag_xhtml_filenames = '*.jsx,*.js'
-let g:closetag_emptyTags_caseSensitive = 1
-let g:closetag_shortcut = '>'
-let g:closetag_close_shortcut = '<leader>>'
 set laststatus=2
 set noswapfile
 set nu
@@ -78,15 +73,16 @@ Plug 'jremmen/vim-ripgrep'
 
 Plug 'ycm-core/YouCompleteMe', { 'do': function('BuildYCM'), 'for': ['go', 'javascript', 'PHP']}
 
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} 
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
 
 call plug#end()
-let mapleader = " "
 
+let mapleader = " "
+set t_Co=256
 colorscheme gruvbox
 
-highlight ColorColumn ctermbg=0 guibg=lightgrey
+"highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 let g:gruvbox_contrast_dark = 'hard'
 
@@ -108,8 +104,6 @@ let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 nnoremap <leader>ps :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
 
 nmap <leader>do :call vimspector#Launch()<CR>
-"nnoremap <leader>dco<space> :call vimspector#Continue()<CR>
-
 nmap <leader>dl <Plug>VimspectorStepInto
 nmap <leader>dco <Plug>VimspectorContinue
 nmap <leader>dj <Plug>VimspectorStepOver
@@ -136,9 +130,6 @@ let g:netrw_keepdir=0
 let g:netrw_banner = 0
 let g:netrw_winsize = 25
 
-let g:javascript_plugin_jsdoc = 1
-let g:javascript_plugin_flow = 1
-
 " Don't resize automatically.
 let g:golden_ratio_autocommand = 0
 
@@ -148,25 +139,7 @@ nmap <C-w>- <Plug>(golden_ratio_resize)
 " Fill screen with current window.
 nnoremap <C-w>+ <C-w><Bar><C-w>_
 
-" use <c-space>for trigger completion
-let g:vim_jsx_pretty_colorful_config = 1
-
 lua require'lspconfig'.tsserver.setup{}
-
-lua require'nvim-treesitter.configs'.setup{
-  \ highlight = {
-  \   enable = true,
-  \   custom_captures = {
-  \     ["foo.bar"] = "Identifier",
-  \     ["foo"] = "Object_pattern",
-  \   },
-  \ },
-  \textobjects = { enable = true },
-  \incremental_selection = { enable = true },
-  \indent = {
-  \  enable = true
-  \ }
-\}
 
 nnoremap <C-p> :lua require('telescope.builtin').git_files()<CR>
 nnoremap <Leader>pf :lua require('telescope.builtin').find_files()<CR>
@@ -202,4 +175,27 @@ nnoremap <Leader>ls :wqa!<CR>
 nnoremap <Leader>ln :qa!<CR>
 nnoremap <Leader>nh :noh<CR>
 
-highlight default link TSVariable Special 
+lua require'nvim-treesitter.configs'.setup{
+  \ highlight = {
+  \   enable = true,
+  \   custom_captures = {
+  \     ["foo.bar"] = "Identifier",
+  \   },
+  \ },
+  \ ensure_installed = {"python", "lua", "yaml", "json", "javascript", "bash"},
+  \textobjects = { enable = true },
+  \incremental_selection = { enable = true },
+  \indent = {
+  \  enable = true
+  \ }
+\}
+
+highlight TSVariable ctermfg=yellow
+
+lua <<EOF
+local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+parser_config.typescript.used_by = "javascriptflow"
+EOF
+
+set cursorline
+
