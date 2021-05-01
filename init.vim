@@ -36,14 +36,6 @@ set signcolumn=yes
 set updatetime=50
 
 set colorcolumn=80
-function! BuildYCM(info)
-  " - name: YouCompleteMe
-  " - status: 'installed'
-  if a:info.status == 'installed' || a:info.force
-    !python3 ./install.py --clangd-completer --go-completer --ts-completer
-    !python3 .ycm_extra_conf.py ~/.vim/plugged/YouCompleteMe/third_party/ycmd
-  endif
-endfunction
 
 call plug#begin('~/.vim/plugged')
 
@@ -67,14 +59,21 @@ Plug 'puremourning/vimspector'
 
 Plug 'vim-airline/vim-airline'
 
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'prettier/vim-prettier', {
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue']
+  \ }
 
 Plug 'jremmen/vim-ripgrep'
 
-Plug 'ycm-core/YouCompleteMe', { 'do': function('BuildYCM'), 'for': ['go', 'javascript', 'PHP']}
-
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
+
+Plug 'mxw/vim-jsx'
+Plug 'pangloss/vim-javascript'
+
+Plug 'alvan/vim-closetag'
+
+Plug 'nvim-lua/completion-nvim'
 
 call plug#end()
 
@@ -99,7 +98,6 @@ let g:gruvbox_invert_selection='0'
 
 set background=dark
 set completeopt=menuone,noinsert,noselect
-let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 
 nnoremap <leader>ps :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
 
@@ -140,6 +138,7 @@ nmap <C-w>- <Plug>(golden_ratio_resize)
 nnoremap <C-w>+ <C-w><Bar><C-w>_
 
 lua require'lspconfig'.tsserver.setup{}
+lua require'lspconfig'.tsserver.setup{on_attach=require'completion'.on_attach}
 
 nnoremap <C-p> :lua require('telescope.builtin').git_files()<CR>
 nnoremap <Leader>pf :lua require('telescope.builtin').find_files()<CR>
@@ -159,7 +158,7 @@ nnoremap <leader>undo :UndotreeToggle<CR>
 nnoremap <silent> <leader>goto :YcmCompleter GoTo<CR>
 nnoremap <silent> <leader>gdef :YcmCompleter GoToDefinition<CR>
 nnoremap <silent> <leader>gref :YcmCompleter GoToReferences<CR>
-let g:ycm_always_populate_location_list = 1
+"let g:ycm_always_populate_location_list = 1
 "caso nao mostrar problemas rodar
 " lua vim.lsp.stop_client(vim.lsp.get_active_clients())
 set runtimepath^=~/.vim/bundle/ctrlp.vim
@@ -169,10 +168,6 @@ nnoremap <Leader>lk :CtrlP<CR>
 set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 let g:ctrlp_working_path_mode = 'ra'
-nnoremap <Leader>sv :w<CR>
-nnoremap <Leader>nv :q!<CR>
-nnoremap <Leader>ls :wqa!<CR>
-nnoremap <Leader>ln :qa!<CR>
 nnoremap <Leader>nh :noh<CR>
 
 lua require'nvim-treesitter.configs'.setup{
@@ -199,3 +194,22 @@ EOF
 
 set cursorline
 
+let g:closetag_filenames = "*.jsx,*.js"
+let g:closetag_xhtml_filenames = '*.jsx,*.js'
+let g:closetag_emptyTags_caseSensitive = 1
+let g:closetag_shortcut = '>'
+let g:closetag_close_shortcut = '<leader>>'
+
+let g:prettier#config#trailing_comma = 'es5'
+let g:prettier#config#tab_width = '2'
+let g:prettier#config#semi = 'false'
+let g:prettier#config#single_quote = 'true'
+let g:prettier#config#arrow_parens = 'avoid'
+"let g:ycm_min_num_of_chars_for_completion = 3
+
+autocmd BufEnter * lua require'completion'.on_attach()
+" Use <Tab> and <S-Tab> to navigate through popup menu
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
+let g:completion_trigger_keyword_length = 3
