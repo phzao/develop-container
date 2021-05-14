@@ -151,20 +151,17 @@ nnoremap <leader>y "+y
 vnoremap <leader>y "+y
 nnoremap <leader>Y gg"+yG
 
-nnoremap <leader>h :vsplit<CR>
-nnoremap <leader>k :split<CR>
+nnoremap <leader>hh :vsplit<CR>
+nnoremap <leader>kk :split<CR>
 nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
 nnoremap <leader>undo :UndotreeToggle<CR>
-nnoremap <silent> <leader>goto :YcmCompleter GoTo<CR>
-nnoremap <silent> <leader>gdef :YcmCompleter GoToDefinition<CR>
-nnoremap <silent> <leader>gref :YcmCompleter GoToReferences<CR>
-"let g:ycm_always_populate_location_list = 1
+
 "caso nao mostrar problemas rodar
 " lua vim.lsp.stop_client(vim.lsp.get_active_clients())
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 
 let g:ctrlp_cmd = 'CtrlP'
-nnoremap <Leader>lk :CtrlP<CR>
+nnoremap <Leader>pf :CtrlP<CR>
 set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 let g:ctrlp_working_path_mode = 'ra'
@@ -205,7 +202,6 @@ let g:prettier#config#tab_width = '2'
 let g:prettier#config#semi = 'false'
 let g:prettier#config#single_quote = 'true'
 let g:prettier#config#arrow_parens = 'avoid'
-"let g:ycm_min_num_of_chars_for_completion = 3
 
 autocmd BufEnter * lua require'completion'.on_attach()
 " Use <Tab> and <S-Tab> to navigate through popup menu
@@ -213,3 +209,9 @@ inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
 let g:completion_trigger_keyword_length = 3
+
+
+nnoremap <C-j> <C-w>j
+nnoremap <C-h> <C-w>h
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
