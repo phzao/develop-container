@@ -60,7 +60,8 @@ Plug 'puremourning/vimspector'
 Plug 'vim-airline/vim-airline'
 
 Plug 'prettier/vim-prettier', {
-  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue']
+  \ 'do': 'yarn install',
+  \ 'branch': 'release/0.x'
   \ }
 
 Plug 'jremmen/vim-ripgrep'
@@ -215,3 +216,7 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-h> <C-w>h
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+
+set list
+set lcs=tab:->,eol:↵,nbsp:&
+"¶
