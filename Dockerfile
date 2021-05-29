@@ -98,12 +98,9 @@ RUN cd ${USERSPACE} && \
 	 chmod +x nvm.sh && \
 	 ./nvm.sh
 
-RUN git clone https://github.com/universal-ctags/ctags.git && \
-      cd ctags && \
-	  ./autogen.sh && \
-	  ./configure && \
-	  make && \
-	  make install
+RUN mkdir ~/.npm-global
+RUN npm config set prefix '~/.npm-global'
+
 RUN apk add fzf
 
 RUN apk add openssh
@@ -112,4 +109,5 @@ RUN set -eux \
         --no-cache \
         nodejs \
         yarn
+
 ENTRYPOINT ["/bin/zsh"]
