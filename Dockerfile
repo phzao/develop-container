@@ -44,9 +44,11 @@ RUN	apk --no-cache add \
         neovim-doc \
 	bash \
 	&& apk --no-cache add --virtual build-dependencies \
+  lua5.3-dev \
 	python3-dev \
 	gcc \
 	musl-dev \
+  lua5.3-libs \
 	git \
 	# create user
 	&& addgroup "${GNAME}" \
@@ -103,4 +105,10 @@ RUN git clone https://github.com/universal-ctags/ctags.git && \
 	  make && \
 	  make install
 
+RUN apk add openssh
+RUN set -eux \
+    & apk add \
+        --no-cache \
+        nodejs \
+        yarn
 ENTRYPOINT ["/bin/zsh"]
