@@ -39,6 +39,7 @@ RUN	apk --no-cache add \
         su-exec \
 		# needed for neovim python3 support
 	python3 \
+  lm-sensors lm-sensors-detect \
 		# needed for pipsi
 	py3-virtualenv \
         neovim-doc \
