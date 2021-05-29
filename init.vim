@@ -220,3 +220,4 @@ nnoremap <C-l> <C-w>l
 set list
 set lcs=tab:->,eol:↵,nbsp:&
 "¶
+nnoremap <Leader>b :ls<CR>:b<Space>

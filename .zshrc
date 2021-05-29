@@ -5,6 +5,8 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+export VISUAL=vim
+export EDITOR="$VISUAL"
 
 export TERM="xterm-256color" # This sets up colors properly
 
@@ -157,7 +159,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(zsh-autosuggestions git docker docker-compose autojump zsh-syntax-highlighting dnf npm history-substring-search zsh-completions)
+plugins=(zsh-autosuggestions git docker docker-compose autojump zsh-syntax-highlighting dnf npm history-substring-search zsh-completions fzf)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -200,6 +202,7 @@ alias gps="ggpush"
 alias gplo="git pull origin"
 alias gs="git stash"
 alias gsa="git stash apply"
+alias python="python3"
 # alias vi="vim"
 # alias jh="jhipster"
 alias cl="clear"
@@ -239,7 +242,7 @@ alias fopen="xdg-open"
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
-# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+ [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 [[ -s /home/dev/.autojump/etc/profile.d/autojump.sh ]] && source /home/dev/.autojump/etc/profile.d/autojump.sh
 autoload -U compinit && compinit -U
@@ -251,3 +254,14 @@ autoload -U compinit && compinit -U
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# tabtab source for serverless package
+# uninstall by removing these lines or running `tabtab uninstall serverless`
+[[ -f /home/phz/Dev/iter/full-api/node_modules/tabtab/.completions/serverless.zsh ]] && . /home/phz/Dev/iter/full-api/node_modules/tabtab/.completions/serverless.zsh
+# tabtab source for sls package
+# uninstall by removing these lines or running `tabtab uninstall sls`
+[[ -f /home/phz/Dev/iter/full-api/node_modules/tabtab/.completions/sls.zsh ]] && . /home/phz/Dev/iter/full-api/node_modules/tabtab/.completions/sls.zsh
+# tabtab source for slss package
+# uninstall by removing these lines or running `tabtab uninstall slss`
+[[ -f /home/phz/Dev/iter/full-api/node_modules/tabtab/.completions/slss.zsh ]] && . /home/phz/Dev/iter/full-api/node_modules/tabtab/.completions/slss.zsh
+#setxkbmap -model pc105 -layout us -variant intl
