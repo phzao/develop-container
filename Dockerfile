@@ -113,4 +113,5 @@ RUN set -eux \
         yarn
 
 RUN npm install -g neovim
+RUN npm i -g typescript typescript-language-server
 ENTRYPOINT ["/bin/zsh"]
