@@ -102,5 +102,6 @@ RUN git clone https://github.com/universal-ctags/ctags.git && \
 	  ./configure && \
 	  make && \
 	  make install
+RUN apk add fzf
 
 ENTRYPOINT ["/bin/zsh"]
