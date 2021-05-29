@@ -112,4 +112,5 @@ RUN set -eux \
         nodejs \
         yarn
 
+RUN npm install -g neovim
 ENTRYPOINT ["/bin/zsh"]
