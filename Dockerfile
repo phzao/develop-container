@@ -49,6 +49,7 @@ RUN	apk --no-cache add \
 	gcc \
 	musl-dev \
   lua5.3-libs \
+  xclip \
 	git \
 	# create user
 	&& addgroup "${GNAME}" \
