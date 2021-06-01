@@ -203,6 +203,7 @@ let g:prettier#config#tab_width = '2'
 let g:prettier#config#semi = 'false'
 let g:prettier#config#single_quote = 'true'
 let g:prettier#config#arrow_parens = 'avoid'
+let g:prettier#config#bracket_spacing = 'true'
 
 autocmd BufEnter * lua require'completion'.on_attach()
 " Use <Tab> and <S-Tab> to navigate through popup menu
@@ -220,4 +221,3 @@ nnoremap <C-l> <C-w>l
 set list
 set lcs=tab:->,eol:↵,nbsp:&
 "¶
-nnoremap <Leader>b :ls<CR>:b<Space>
