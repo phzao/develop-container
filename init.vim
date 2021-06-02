@@ -162,7 +162,7 @@ nnoremap <leader>undo :UndotreeToggle<CR>
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 
 let g:ctrlp_cmd = 'CtrlP'
-nnoremap <Leader>pf :CtrlP<CR>
+nnoremap <Leader>cp :CtrlP<CR>
 set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 let g:ctrlp_working_path_mode = 'ra'
