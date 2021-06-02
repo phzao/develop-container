@@ -48,3 +48,10 @@ pip install --user neovim
 
 #tmux custom
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+npm install -g neovim
+npm i -g typescript typescript-language-server
+

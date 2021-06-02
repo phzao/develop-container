@@ -100,9 +100,6 @@ RUN cd ${USERSPACE} && \
 	 chmod +x nvm.sh && \
 	 ./nvm.sh
 
-RUN mkdir ~/.npm-global
-RUN npm config set prefix '~/.npm-global'
-
 RUN apk add fzf
 
 RUN apk add openssh
@@ -112,6 +109,4 @@ RUN set -eux \
         nodejs \
         yarn
 
-RUN npm install -g neovim
-RUN npm i -g typescript typescript-language-server
 ENTRYPOINT ["/bin/zsh"]
