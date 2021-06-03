@@ -43,6 +43,7 @@ Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'gruvbox-community/gruvbox'
+Plug 'simrat39/symbols-outline.nvim'
 
 Plug 'nvim-lua/lsp_extensions.nvim'
 Plug 'neovim/nvim-lspconfig'
@@ -74,7 +75,8 @@ Plug 'pangloss/vim-javascript'
 
 Plug 'alvan/vim-closetag'
 
-Plug 'nvim-lua/completion-nvim'
+Plug 'hrsh7th/nvim-compe'
+Plug 'glepnir/lspsaga.nvim'
 
 call plug#end()
 
@@ -138,8 +140,8 @@ nmap <C-w>- <Plug>(golden_ratio_resize)
 " Fill screen with current window.
 nnoremap <C-w>+ <C-w><Bar><C-w>_
 
-lua require'lspconfig'.tsserver.setup{}
-lua require'lspconfig'.tsserver.setup{on_attach=require'completion'.on_attach}
+"lua require'lspconfig'.tsserver.setup{}
+"lua require'lspconfig'.tsserver.setup{on_attach=require'completion'.on_attach}
 
 nnoremap <C-p> :lua require('telescope.builtin').git_files()<CR>
 nnoremap <Leader>pf :lua require('telescope.builtin').find_files()<CR>
@@ -205,12 +207,12 @@ let g:prettier#config#single_quote = 'true'
 let g:prettier#config#arrow_parens = 'avoid'
 let g:prettier#config#bracket_spacing = 'true'
 
-autocmd BufEnter * lua require'completion'.on_attach()
-" Use <Tab> and <S-Tab> to navigate through popup menu
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
-let g:completion_trigger_keyword_length = 3
+"autocmd BufEnter * lua require'completion'.on_attach()
+"" Use <Tab> and <S-Tab> to navigate through popup menu
+"inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+"inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
+"let g:completion_trigger_keyword_length = 3
 
 
 nnoremap <C-j> <C-w>j
@@ -221,3 +223,83 @@ nnoremap <C-l> <C-w>l
 set list
 set lcs=tab:->,eol:↵,nbsp:&
 "¶
+nnoremap <Leader>b :ls<CR>:b<Space>
+
+let g:symbols_outline = {
+    \ "highlight_hovered_item": v:true,
+    \ "show_guides": v:true,
+    \ "position": 'right',
+    \ "auto_preview": v:true,
+    \ "keymaps": {
+        \ "close": "<Esc>",
+        \ "goto_location": "<Cr>",
+        \ "focus_location": "o",
+        \ "hover_symbol": "<C-space>",
+        \ "rename_symbol": "r",
+        \ "code_actions": "a",
+    \ },
+    \ "lsp_blacklist": [],
+\ }
+
+nnoremap <Leader>sb :SymbolsOutline<CR>
+
+inoremap <silent><expr> <C-Space> compe#complete()
+inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+inoremap <silent><expr> <C-e>     compe#close('<C-e>')
+inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
+inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
+
+let g:compe = {}
+let g:compe.enabled = v:true
+let g:compe.autocomplete = v:true
+let g:compe.debug = v:false
+let g:compe.min_length = 1
+let g:compe.preselect = 'enable'
+let g:compe.throttle_time = 80
+let g:compe.source_timeout = 200
+let g:compe.incomplete_delay = 400
+let g:compe.max_abbr_width = 100
+let g:compe.max_kind_width = 100
+let g:compe.max_menu_width = 100
+let g:compe.documentation = v:true
+
+let g:compe.source = {}
+let g:compe.source.path = v:true
+let g:compe.source.buffer = v:true
+let g:compe.source.calc = v:true
+let g:compe.source.nvim_lsp = v:true
+let g:compe.source.nvim_lua = v:true
+let g:compe.source.vsnip = v:true
+let g:compe.source.ultisnips = v:true
+
+lua << EOF
+local nvim_lsp = require('lspconfig')
+
+-- Use an on_attach function to only map the following keys 
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  --Enable completion triggered by <c-x><c-o>
+  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+
+  buf_set_keymap('n', '<Leader>ld',"lua require'lspsaga.diagnostic'.show_line_diagnostic()<CR>", opts)
+  buf_set_keymap('n', '<Leader>c]',"<cmd> lua vim.lsp.buf.definition()<CR>", opts)
+  buf_set_keymap('n', 'K',"<cmd>lua require'lspsaga.hover'.render_hover_doc()<CR>", opts)
+  buf_set_keymap('n', 'gd',"<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
+
+end
+
+-- Use a loop to conveniently call 'setup' on multiple servers and
+-- map buffer local keybindings when the language server attaches
+local servers = { "tsserver" }
+for _, lsp in ipairs(servers) do
+  nvim_lsp[lsp].setup { on_attach = on_attach }
+end
+EOF
+
+highlight link LspSagaFinderSelection Search
