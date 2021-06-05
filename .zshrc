@@ -1,4 +1,4 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Enable Powerlevel11k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -200,13 +200,12 @@ alias gps="ggpush"
 alias gplo="git pull origin"
 alias gs="git stash"
 alias gsa="git stash apply"
-alias pbcopy='xclip -selection clipboard'
-alias pbpaste='xclip -selection clipboard -o'
 # alias vi="vim"
 # alias jh="jhipster"
 alias cl="clear"
 # alias open="google-chrome"
 alias fopen="xdg-open"
+
 # function dipa(){
 #   docker rm -v $(docker ps -a -q -f status=exited);
 #   docker volume rm $(docker volume ls -qf dangling=true);
@@ -254,3 +253,13 @@ autoload -U compinit && compinit -U
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 export PATH=~/.npm-global/bin:$PATH
+
+# tabtab source for serverless package
+# uninstall by removing these lines or running `tabtab uninstall serverless`
+[[ -f /development/iter/full-api/node_modules/tabtab/.completions/serverless.zsh ]] && . /development/iter/full-api/node_modules/tabtab/.completions/serverless.zsh
+# tabtab source for sls package
+# uninstall by removing these lines or running `tabtab uninstall sls`
+[[ -f /development/iter/full-api/node_modules/tabtab/.completions/sls.zsh ]] && . /development/iter/full-api/node_modules/tabtab/.completions/sls.zsh
+# tabtab source for slss package
+# uninstall by removing these lines or running `tabtab uninstall slss`
+[[ -f /development/iter/full-api/node_modules/tabtab/.completions/slss.zsh ]] && . /development/iter/full-api/node_modules/tabtab/.completions/slss.zsh
