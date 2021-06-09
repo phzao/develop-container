@@ -101,8 +101,6 @@ RUN cd ${USERSPACE} && \
 	 chmod +x nvm.sh && \
 	 ./nvm.sh
 
-RUN apk add fzf
-
 RUN apk add openssh
 RUN set -eux \
     & apk add \
