@@ -39,6 +39,7 @@ RUN	apk --no-cache add \
         su-exec \
 		# needed for neovim python3 support
 	python3 \
+	python2 \
   lm-sensors lm-sensors-detect \
 		# needed for pipsi
 	py3-virtualenv \
@@ -82,7 +83,7 @@ ENV TZ America/Sao_Paulo
 
 RUN git clone https://github.com/neovim/neovim.git && \
   cd neovim && \
-  make DCMAKE_INSTALL_PREFIX=/home/dev/neovim && \
+  make CMAKE_BUILD_TYPE=RelWithDebInfo && \
   make install
 
 ENV PATH="/home/dev/neovim/bin:$PATH"

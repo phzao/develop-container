@@ -77,6 +77,7 @@ Plug 'alvan/vim-closetag'
 
 Plug 'hrsh7th/nvim-compe'
 Plug 'glepnir/lspsaga.nvim'
+Plug 'ctrlpvim/ctrlp.vim'
 
 call plug#end()
 
@@ -303,3 +304,7 @@ end
 EOF
 
 highlight link LspSagaFinderSelection Search
+
+nnoremap <Leader>= :vertical resize +20<CR>
+nnoremap <Leader>- :vertical resize -20<CR>
+
