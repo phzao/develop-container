@@ -55,6 +55,3 @@ npm config set prefix '~/.npm-global'
 npm install -g neovim
 npm i -g typescript typescript-language-server
 
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-cd ~/.fzf
-./install
