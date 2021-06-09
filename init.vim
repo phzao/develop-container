@@ -49,6 +49,7 @@ Plug 'nvim-lua/lsp_extensions.nvim'
 Plug 'neovim/nvim-lspconfig'
 
 Plug 'dyng/ctrlsf.vim'
+Plug 'ryanoasis/vim-devicons'
 
 Plug 'preservim/nerdcommenter'
 
@@ -78,6 +79,7 @@ Plug 'alvan/vim-closetag'
 Plug 'hrsh7th/nvim-compe'
 Plug 'glepnir/lspsaga.nvim'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
 call plug#end()
 
@@ -208,14 +210,6 @@ let g:prettier#config#single_quote = 'true'
 let g:prettier#config#arrow_parens = 'avoid'
 let g:prettier#config#bracket_spacing = 'true'
 
-"autocmd BufEnter * lua require'completion'.on_attach()
-"" Use <Tab> and <S-Tab> to navigate through popup menu
-"inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-"inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-"let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
-"let g:completion_trigger_keyword_length = 3
-
-
 nnoremap <C-j> <C-w>j
 nnoremap <C-h> <C-w>h
 nnoremap <C-k> <C-w>k
@@ -308,3 +302,88 @@ highlight link LspSagaFinderSelection Search
 nnoremap <Leader>= :vertical resize +20<CR>
 nnoremap <Leader>- :vertical resize -20<CR>
 
+lua << EOF
+-- require('telescope').setup {
+--   extensions = {
+--     fzf = {
+--       override_generic_sorter = false, -- override the generic sorter
+--       override_file_sorter = true,     -- override the file sorter
+--       case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+--                                        -- the default case_mode is "smart_case"
+--     }
+--   }
+-- }
+-- require('telescope').load_extension('fzf')
+
+ local actions = require('telescope.actions')
+ require('telescope').setup {
+   defaults = {
+ 	 file_sorter = require('telescope.sorters').get_fzy_sorter,
+          prompt_prefix = ' >',
+          color_devicons = true,
+ 
+          file_previewer   = require('telescope.previewers').vim_buffer_cat.new,
+          grep_previewer   = require('telescope.previewers').vim_buffer_vimgrep.new,
+          qflist_previewer   = require('telescope.previewers').vim_buffer_qflist.new,
+ 
+          mappings = {
+                  i = {
+                        [ "<C-x>"] = false,
+                        [ "<C-q>"] = actions.send_to_qflist,
+                   },
+           }
+      },
+      extensions = {
+             fzy_native = {
+                  override_generic_sorter = false,
+                  override_file_sorter = true,
+             }
+      }
+ }
+ require('telescope').load_extension('fzf')
+EOF
+
+lua << EOF
+local t = function(str)
+  return vim.api.nvim_replace_termcodes(str, true, true, true)
+end
+
+local check_back_space = function()
+    local col = vim.fn.col('.') - 1
+    if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+        return true
+    else
+        return false
+    end
+end
+
+-- Use (s-)tab to:
+--- move to prev/next item in completion menuone
+--- jump to prev/next snippet's placeholder
+_G.tab_complete = function()
+  if vim.fn.pumvisible() == 1 then
+    return t "<C-n>"
+  elseif vim.fn.call("vsnip#available", {1}) == 1 then
+    return t "<Plug>(vsnip-expand-or-jump)"
+  elseif check_back_space() then
+    return t "<Tab>"
+  else
+    return vim.fn['compe#complete']()
+  end
+end
+_G.s_tab_complete = function()
+  if vim.fn.pumvisible() == 1 then
+    return t "<C-p>"
+  elseif vim.fn.call("vsnip#jumpable", {-1}) == 1 then
+    return t "<Plug>(vsnip-jump-prev)"
+  else
+    -- If <S-Tab> is not working in your terminal, change it to <C-h>
+    return t "<S-Tab>"
+  end
+end
+
+vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
+vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
+vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+EOF
