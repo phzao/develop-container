@@ -264,5 +264,5 @@ export PATH=~/.npm-global/bin:$PATH
 # uninstall by removing these lines or running `tabtab uninstall slss`
 [[ -f /development/iter/full-api/node_modules/tabtab/.completions/slss.zsh ]] && . /development/iter/full-api/node_modules/tabtab/.completions/slss.zsh
 
-export EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0↵
+export EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
 export REACT_NATIVE_PACKAGER_HOSTNAME=192.168.15.101
