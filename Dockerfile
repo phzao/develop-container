@@ -120,7 +120,7 @@ RUN apk add --no-cache curl && \
     rm -fR phantomjs-${PHANTOMJS_VERSION}-linux-x86_64 && \
     apk del curl
 
-RUN apk add openssh
+RUN apk add openssh fzf
 RUN set -eux \
     & apk add \
         --no-cache \
