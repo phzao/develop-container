@@ -54,4 +54,5 @@ mkdir ~/.npm-global
 npm config set prefix '~/.npm-global'
 npm install -g neovim
 npm i -g typescript typescript-language-server
+npm install --global expo-cli
 

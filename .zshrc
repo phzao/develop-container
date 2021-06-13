@@ -266,3 +266,5 @@ export PATH=~/.npm-global/bin:$PATH
 
 export EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
 export REACT_NATIVE_PACKAGER_HOSTNAME=192.168.15.101
+export VISUAL=nvim
+export EDITOR="$VISUAL"
