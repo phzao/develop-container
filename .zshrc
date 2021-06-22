@@ -265,6 +265,7 @@ export PATH=~/.npm-global/bin:$PATH
 [[ -f /development/iter/full-api/node_modules/tabtab/.completions/slss.zsh ]] && . /development/iter/full-api/node_modules/tabtab/.completions/slss.zsh
 
 export EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
-export REACT_NATIVE_PACKAGER_HOSTNAME=192.168.15.101
-export VISUAL=nvim
+export REACT_NATIVE_PACKAGER_HOSTNAME=192.168.0.12
+export GIT_EDITOR=vim
+export VISUAL=vim
 export EDITOR="$VISUAL"
