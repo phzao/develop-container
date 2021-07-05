@@ -266,6 +266,8 @@ export PATH=~/.npm-global/bin:$PATH
 
 export EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
 export REACT_NATIVE_PACKAGER_HOSTNAME=192.168.0.12
-export GIT_EDITOR=vim
-export VISUAL=vim
+export GIT_EDITOR=nvim
+export VISUAL=nvim
 export EDITOR="$VISUAL"
+
+[ -s "/home/dev/.scm_breeze/scm_breeze.sh" ] && source "/home/dev/.scm_breeze/scm_breeze.sh"
