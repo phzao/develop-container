@@ -81,7 +81,7 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8 
 ENV TZ America/Sao_Paulo
 
-RUN git clone https://github.com/neovim/neovim.git && \
+RUN  && \
   cd neovim && \
   make CMAKE_BUILD_TYPE=RelWithDebInfo && \
   make install
@@ -127,4 +127,5 @@ RUN set -eux \
         nodejs \
         yarn
 
+RUN apk add libc6-compat
 ENTRYPOINT ["/bin/zsh"]
