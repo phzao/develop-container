@@ -54,8 +54,4 @@ mkdir ~/.npm-global
 npm config set prefix '~/.npm-global'
 npm install -g neovim
 npm i -g typescript typescript-language-server
-npm install --global expo-cli
 
-git clone git://github.com/scmbreeze/scm_breeze.git ~/.scm_breeze
-~/.scm_breeze/install.sh
-source ~/.zshrc

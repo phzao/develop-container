@@ -270,4 +270,3 @@ export GIT_EDITOR=nvim
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 
-[ -s "/home/dev/.scm_breeze/scm_breeze.sh" ] && source "/home/dev/.scm_breeze/scm_breeze.sh"
