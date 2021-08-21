@@ -81,10 +81,8 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8 
 ENV TZ America/Sao_Paulo
 
-RUN  && \
-  cd neovim && \
-  make CMAKE_BUILD_TYPE=RelWithDebInfo && \
-  make install
+RUN git clone https://github.com/neovim/neovim && \
+    cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo && make install
 
 ENV PATH="/home/dev/neovim/bin:$PATH"
 
