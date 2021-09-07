@@ -36,6 +36,20 @@ set signcolumn=yes
 set updatetime=50
 
 set colorcolumn=80
+set path+=**
+
+" Nice menu when typing `:find *.py`
+set wildmode=longest,list,full
+set wildmenu
+
+" Ignore files
+set wildignore+=*.pyc
+set wildignore+=*_build/*
+set wildignore+=**/coverage/*
+set wildignore+=**/node_modules/*
+set wildignore+=**/android/*
+set wildignore+=**/ios/*
+set wildignore+=**/.git/*
 
 call plug#begin('~/.vim/plugged')
 
@@ -66,8 +80,8 @@ Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
   \ 'branch': 'release/0.x'
   \ }
-
-Plug 'jremmen/vim-ripgrep'
+Plug 'ThePrimeagen/git-worktree.nvim'
+"Plug 'jremmen/vim-ripgrep'
 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
@@ -80,14 +94,29 @@ Plug 'alvan/vim-closetag'
 Plug 'hrsh7th/nvim-compe'
 Plug 'glepnir/lspsaga.nvim'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'theprimeagen/vim-be-good'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'ThePrimeagen/harpoon'
 
 call plug#end()
+
+lua <<EOF
+vim.cmd 'packadd paq-nvim'
+local paq = require('paq-nvim').paq
+paq { 'nvim-telescope/telescope-fzy-native.nvim', run='git submodule update --init --recursive' }
+EOF
+
+" Adding local modules
+let &runtimepath.=',' . expand("$HOME") . '/personal/harpoon/master'
+let &runtimepath.=',' . expand("$HOME") . '/personal/vim-with-me/ui'
+let &runtimepath.=',' . expand("$HOME") . '/personal/git-worktree.nvim/master'
+let &runtimepath.=',' . expand("$HOME") . '/personal/refactoring.nvim/get-locals'
 
 let mapleader = " "
 set t_Co=256
 colorscheme gruvbox
-
+lua require("theprimeagen")
 "highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 let g:gruvbox_contrast_dark = 'hard'
