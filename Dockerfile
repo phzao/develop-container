@@ -2,7 +2,7 @@ FROM alpine:3.12
 
 WORKDIR /home/dev
 
-RUN apk --no-cache add zip unzip git nodejs xfce4-dev-tools build-base zsh tmux openrc \
+RUN apk --no-cache add zip unzip apache2-utils git nodejs xfce4-dev-tools build-base zsh tmux openrc \
   alpine-sdk libtool automake m4 autoconf linux-headers tini ripgrep lm-sensors-sensord \
   make fontconfig \
   cmake \
