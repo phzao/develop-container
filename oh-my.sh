@@ -1,6 +1,6 @@
 #!/bin/sh
 
-USERSPACE="/home/dev"
+USERSPACE="/home/node"
 
 mkdir -p $USERSPACE/.oh-my-zsh/custom/themes
 mkdir -p $USERSPACE/.local/share/fonts
@@ -47,9 +47,9 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
 pip install --user neovim
 
 #tmux custom
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+#git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 
-npm install -g neovim
-npm i -g typescript typescript-language-server
+#npm install -g neovim
+#npm i -g typescript typescript-language-server
 

@@ -2,10 +2,26 @@ FROM alpine:3.12
 
 ENV NODE_VERSION 16.13.1
 
-WORKDIR /home/dev
+WORKDIR /home/node
 
-RUN addgroup -g 1000 node \
-    && adduser -u 1000 -G node -s /bin/sh -D node \
+ENV UID="1000" \
+	GID="1000" \
+	UNAME="node" \
+	GNAME="node" \
+	SHELL="/bin/bash" \
+	WORKSPACE="/development" \
+	USERSPACE="/home/node" \
+	NVIM_CONFIG="/home/node/.config/nvim" \
+	NVIM_PCK="/home/node/.local/share/nvim/site/pack" \
+	ENV_DIR="/home/node/.local/share/vendorvenv" \
+	NVIM_PROVIDER_PYLIB="python3_neovim_provider" \
+	PATH="/home/node/.local/bin:${PATH}"
+
+
+RUN apk --no-cache add shadow sudo su-exec \
+    && addgroup "${GNAME}" \
+	  && adduser -D -G "${GNAME}" -g "" -s "${SHELL}" "${UNAME}" \
+    && echo "${UNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
     && apk add --no-cache \
         libstdc++ \
     && apk add --no-cache --virtual .build-deps \
@@ -94,34 +110,20 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
   # smoke test
   && yarn --version
 
-#COPY docker-entrypoint.sh /usr/local/bin/
-
 RUN apk --no-cache add zip unzip apache2-utils git xfce4-dev-tools build-base zsh tmux openrc \
+  lua5.3-dev \
+	python3-dev \
+	gcc \
+	musl-dev \
+  lua5.3-libs \
+  xclip \
   alpine-sdk libtool automake m4 autoconf linux-headers tini ripgrep lm-sensors-sensord \
   make fontconfig \
   cmake \
+  zsh-vcs openssh-keygen pcre-dev xz-dev g++ npm \
+  && sudo -u node sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"\
   && rm -rf /var/cache/apk/*
 
-ENV UID="1000" \
-	GID="1000" \
-	UNAME="dev" \
-	GNAME="dev" \
-	SHELL="/bin/bash" \
-	WORKSPACE="/development" \
-	USERSPACE="/home/dev" \
-	NVIM_CONFIG="/home/dev/.config/nvim" \
-	NVIM_PCK="/home/dev/.local/share/nvim/site/pack" \
-	ENV_DIR="/home/dev/.local/share/vendorvenv" \
-	NVIM_PROVIDER_PYLIB="python3_neovim_provider" \
-	PATH="/home/dev/.local/bin:${PATH}"
-
-# python 
-ENV PYTHONUNBUFFERED=1
-RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
-RUN python3 -m ensurepip
-RUN pip3 install --no-cache --upgrade pip setuptools
-
-	# install packages
 RUN	apk --no-cache add \
 		# needed by neovim :CheckHealth to fetch info
 	curl \
@@ -147,29 +149,37 @@ RUN	apk --no-cache add \
   lua5.3-libs \
   xclip \
 	git \
-	# create user
-	&& addgroup "${GNAME}" \
-	&& adduser -D -G "${GNAME}" -g "" -s "${SHELL}" "${UNAME}" \
-        && echo "${UNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
 	# install neovim python3 provide
-	&& sudo -u dev python3 -m venv "${ENV_DIR}/${NVIM_PROVIDER_PYLIB}" \
+	&& sudo -u node python3 -m venv "${ENV_DIR}/${NVIM_PROVIDER_PYLIB}" \
 	&& "${ENV_DIR}/${NVIM_PROVIDER_PYLIB}/bin/pip" install pynvim \
 	# install pipsi and python language server
-	&& curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | sudo -u dev python3 \ 
-  && sudo -u dev pipsi install python-language-server
+	&& curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | sudo -u node python3 \ 
+  && sudo -u node pipsi install python-language-server
 
-RUN apk add --no-cache zsh-vcs openssh-keygen pcre-dev xz-dev g++ npm
-RUN sudo -u dev sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 COPY .zshrc ${USERSPACE}/.zshrc
-COPY .tmux.conf ${USERSPACE}/.tmux.conf
 COPY init.vim ${NVIM_CONFIG}/init.vim
 COPY oh-my.sh ${USERSPACE}/oh-my.sh
 
+# python 
+ENV PYTHONUNBUFFERED=1
+RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+RUN python3 -m ensurepip
+RUN pip3 install --no-cache --upgrade pip setuptools
+
 RUN chmod +x ${USERSPACE}/oh-my.sh
 RUN cd ${USERSPACE}
-RUN chown -R dev:dev ${USERSPACE}
-RUN sudo -u dev ./oh-my.sh
+RUN chown -R node:node ${USERSPACE}
+RUN sudo -u node ./oh-my.sh
+
+RUN apk add openssh fzf
+RUN set -eux
+RUN apk add libc6-compat fd
+
+#tmux custom
+
+RUN npm install -g neovim
+RUN npm i -g typescript typescript-language-server
 
 ENV LC_ALL=C.UTF-8 
 ENV LANG=C.UTF-8 
@@ -180,10 +190,10 @@ RUN git clone https://github.com/neovim/neovim && \
 
 ENV PATH="/home/dev/neovim/bin:$PATH"
 
-RUN chown -R dev:dev /usr/lib/node_modules
+RUN chown -R node:node /usr/lib/node_modules
 
 RUN git clone https://github.com/ggreer/the_silver_searcher.git
-RUN chown -R dev:dev ${USERSPACE}  &&\
+RUN chown -R node:node ${USERSPACE}  &&\
     cd the_silver_searcher && \
 	./build.sh && \
 	make install
@@ -212,12 +222,5 @@ RUN apk add --no-cache curl && \
     rm -fR phantomjs-${PHANTOMJS_VERSION}-linux-x86_64 && \
     apk del curl
 
-RUN apk add openssh fzf
-RUN set -eux \
-    & apk add \
-        --no-cache \
-        nodejs \
-        yarn
-
-RUN apk add libc6-compat
 ENTRYPOINT ["/bin/zsh"]
+

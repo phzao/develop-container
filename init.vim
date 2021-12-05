@@ -95,28 +95,28 @@ Plug 'hrsh7th/nvim-compe'
 Plug 'glepnir/lspsaga.nvim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'theprimeagen/vim-be-good'
-Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+"Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
-Plug 'ThePrimeagen/harpoon'
+"Plug 'ThePrimeagen/harpoon'
 
 call plug#end()
 
-lua <<EOF
-vim.cmd 'packadd paq-nvim'
-local paq = require('paq-nvim').paq
-paq { 'nvim-telescope/telescope-fzy-native.nvim', run='git submodule update --init --recursive' }
-EOF
+"lua <<EOF
+"vim.cmd 'packadd paq-nvim'
+"local paq = require('paq-nvim').paq
+"paq { 'nvim-telescope/telescope-fzy-native.nvim', run='git submodule update --init --recursive' }
+"EOF
 
 " Adding local modules
-let &runtimepath.=',' . expand("$HOME") . '/personal/harpoon/master'
-let &runtimepath.=',' . expand("$HOME") . '/personal/vim-with-me/ui'
-let &runtimepath.=',' . expand("$HOME") . '/personal/git-worktree.nvim/master'
-let &runtimepath.=',' . expand("$HOME") . '/personal/refactoring.nvim/get-locals'
+"let &runtimepath.=',' . expand("$HOME") . '/personal/harpoon/master'
+"let &runtimepath.=',' . expand("$HOME") . '/personal/vim-with-me/ui'
+"let &runtimepath.=',' . expand("$HOME") . '/personal/git-worktree.nvim/master'
+"let &runtimepath.=',' . expand("$HOME") . '/personal/refactoring.nvim/get-locals'
 
 let mapleader = " "
 set t_Co=256
 colorscheme gruvbox
-lua require("theprimeagen")
+"lua require("theprimeagen")
 "highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 let g:gruvbox_contrast_dark = 'hard'
@@ -370,7 +370,7 @@ lua << EOF
              }
       }
  }
- require('telescope').load_extension('fzf')
+ require('telescope').load_extension('fzy_native')
 EOF
 
 lua << EOF
