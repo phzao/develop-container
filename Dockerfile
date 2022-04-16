@@ -219,5 +219,6 @@ RUN set -eux \
         nodejs \
         yarn
 
-RUN apk add libc6-compat
+RUN apk add libc6-compat gcompat
+
 ENTRYPOINT ["/bin/zsh"]
