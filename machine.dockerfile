@@ -1,8 +1,9 @@
-FROM alpine:3.12
-
-ENV NODE_VERSION 16.13.1
+FROM alpine:3.17
 
 WORKDIR /home/node
+
+RUN apk add --no-cache bash
+RUN ln -sf /bin/bash /bin/sh
 
 ENV UID="1000" \
 	GID="1000" \
@@ -16,12 +17,12 @@ ENV UID="1000" \
 	ENV_DIR="/home/node/.local/share/vendorvenv" \
 	NVIM_PROVIDER_PYLIB="python3_neovim_provider" \
 	PATH="/home/node/.local/bin:${PATH}"
+ENV NODE_VERSION 18.16.1
 
+RUN apk add sudo
 
-RUN apk --no-cache add shadow sudo su-exec \
-    && addgroup "${GNAME}" \
-	  && adduser -D -G "${GNAME}" -g "" -s "${SHELL}" "${UNAME}" \
-    && echo "${UNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+RUN addgroup -g 1000 node \
+    && adduser -u 1000 -G node -s /bin/sh -D node \
     && apk add --no-cache \
         libstdc++ \
     && apk add --no-cache --virtual .build-deps \
@@ -30,7 +31,7 @@ RUN apk --no-cache add shadow sudo su-exec \
       && case "${alpineArch##*-}" in \
         x86_64) \
           ARCH='x64' \
-          CHECKSUM="3b4c47e5554fa466651a767691fc76c09b6a514b49d79bbd0061e549614adedf" \
+          CHECKSUM="aaf8f7ad6191dd62228b16071364d900a4ac3ef65c4931bc2a11925c2f72fb83" \
           ;; \
         *) ;; \
       esac \
@@ -52,19 +53,20 @@ RUN apk --no-cache add shadow sudo su-exec \
         linux-headers \
         make \
         python3 \
+    # use pre-existing gpg directory, see https://github.com/nodejs/docker-node/pull/1895#issuecomment-1550389150
+    && export GNUPGHOME="$(mktemp -d)" \
     # gpg keys listed at https://github.com/nodejs/node#release-keys
     && for key in \
       4ED778F539E3634C779C87C6D7062848A1AB005C \
-      94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
+      141F07595B7B3FFE74309A937405533BE57C7D57 \
       74F12602B6F1C4E913FAA37AD3A89613643B6201 \
-      71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
+      DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7 \
+      61FC681DFB92A079F1685E77973F295594EC4689 \
       8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
       C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
+      890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4 \
       C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
-      DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-      A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
       108F52B48DB57BB0CC439B2997B01419BD92F80A \
-      B9E2F5981AA6E0CD28160D9FF13993A75599653C \
     ; do \
       gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
       gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
@@ -72,6 +74,8 @@ RUN apk --no-cache add shadow sudo su-exec \
     && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION.tar.xz" \
     && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
     && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
+    && gpgconf --kill all \
+    && rm -rf "$GNUPGHOME" \
     && grep " node-v$NODE_VERSION.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
     && tar -xf "node-v$NODE_VERSION.tar.xz" \
     && cd "node-v$NODE_VERSION" \
@@ -89,7 +93,7 @@ RUN apk --no-cache add shadow sudo su-exec \
   && node --version \
   && npm --version
 
-ENV YARN_VERSION 1.22.15
+ENV YARN_VERSION 1.22.19
 
 RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
   && for key in \
@@ -112,6 +116,7 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
 
 RUN apk --no-cache add zip unzip apache2-utils git xfce4-dev-tools build-base zsh tmux openrc \
   lua5.3-dev \
+  lm-sensors lm-sensors-detect \
 	python3-dev \
 	gcc \
 	musl-dev \
@@ -124,37 +129,37 @@ RUN apk --no-cache add zip unzip apache2-utils git xfce4-dev-tools build-base zs
   && sudo -u node sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"\
   && rm -rf /var/cache/apk/*
 
-RUN	apk --no-cache add \
-		# needed by neovim :CheckHealth to fetch info
-	curl \
-		# needed to change uid and gid on running container
-	shadow \
-		# needed to install apk packages as neovim user on the container
-	sudo \
-		# needed to switch user
-        su-exec \
-		# needed for neovim python3 support
-	python3 \
-	python2 \
-  lm-sensors lm-sensors-detect \
-		# needed for pipsi
-	py3-virtualenv \
-        neovim-doc \
-	bash \
-	&& apk --no-cache add --virtual build-dependencies \
-  lua5.3-dev \
-	python3-dev \
-	gcc \
-	musl-dev \
-  lua5.3-libs \
-  xclip \
-	git \
-	# install neovim python3 provide
-	&& sudo -u node python3 -m venv "${ENV_DIR}/${NVIM_PROVIDER_PYLIB}" \
-	&& "${ENV_DIR}/${NVIM_PROVIDER_PYLIB}/bin/pip" install pynvim \
-	# install pipsi and python language server
-	&& curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | sudo -u node python3 \ 
-  && sudo -u node pipsi install python-language-server
+#RUN	apk --no-cache add \
+#		# needed by neovim :CheckHealth to fetch info
+#	curl \
+#		# needed to change uid and gid on running container
+#	shadow \
+#		# needed to install apk packages as neovim user on the container
+#	sudo \
+#		# needed to switch user
+#        su-exec \
+#		# needed for neovim python3 support
+#	python3 \
+#	python2 \
+#  lm-sensors lm-sensors-detect \
+#		# needed for pipsi
+#	py3-virtualenv \
+#        neovim-doc \
+#	bash \
+#	&& apk --no-cache add --virtual build-dependencies \
+#  lua5.3-dev \
+#	python3-dev \
+#	gcc \
+#	musl-dev \
+#  lua5.3-libs \
+#  xclip \
+#	git \
+#	# install neovim python3 provide
+#	&& sudo -u node python3 -m venv "${ENV_DIR}/${NVIM_PROVIDER_PYLIB}" \
+#	&& "${ENV_DIR}/${NVIM_PROVIDER_PYLIB}/bin/pip" install pynvim \
+#	# install pipsi and python language server
+#	&& curl https://raw.githubusercontent.com/mitsuhiko/pipsi/master/get-pipsi.py | sudo -u node python3 \ 
+#  && sudo -u node pipsi install python-language-server
 
 
 COPY .zshrc ${USERSPACE}/.zshrc
@@ -178,8 +183,8 @@ RUN apk add libc6-compat fd
 
 #tmux custom
 
-RUN npm install -g neovim
-RUN npm i -g typescript typescript-language-server
+#RUN npm install -g neovim
+#RUN npm i -g typescript typescript-language-server
 
 ENV LC_ALL=C.UTF-8 
 ENV LANG=C.UTF-8 
@@ -198,14 +203,22 @@ RUN chown -R node:node ${USERSPACE}  &&\
 	./build.sh && \
 	make install
 
-RUN cd ${USERSPACE} && \
-     cd .nvm && \
-	 chmod +x nvm.sh && \
-	 ./nvm.sh
+# Install NVM and source it
+#RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+#RUN echo '\
+#export NVM_DIR="~/.nvm" \
+#[-s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
+#[[ -r $NVM_DIR/bash_completion ]] && \. $NVM_DIR/bash_completion\
+#' > ~/.zshrc
+
+#RUN cd ${USERSPACE} && \
+#     cd .nvm && \
+#	 chmod +x nvm.sh && \
+#	 ./nvm.sh
 
 # If you also need fonts then add this - Select any fonts from here https://wiki.alpinelinux.org/wiki/Fonts
 # Just replace ttf-ubuntu-font-family with fonts that you need
-RUN apk --update add ttf-ubuntu-font-family fontconfig && rm -rf /var/cache/apk/*
+RUN apk --update add ttf-freefont fontconfig && rm -rf /var/cache/apk/*
 
 # if ever you need to change phantom js version number in future ENV comes handy as it can be used as a dynamic variable
 ENV PHANTOMJS_VERSION=2.1.1
@@ -221,6 +234,7 @@ RUN apk add --no-cache curl && \
     cp phantomjs-${PHANTOMJS_VERSION}-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs && \
     rm -fR phantomjs-${PHANTOMJS_VERSION}-linux-x86_64 && \
     apk del curl
+
 
 ENTRYPOINT ["/bin/zsh"]
 
