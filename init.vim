@@ -101,6 +101,18 @@ Plug 'nvim-telescope/telescope-fzy-native.nvim'
 
 call plug#end()
 
+"lua <<EOF
+"vim.cmd 'packadd paq-nvim'
+"local paq = require('paq-nvim').paq
+"paq { 'nvim-telescope/telescope-fzy-native.nvim', run='git submodule update --init --recursive' }
+"EOF
+
+" Adding local modules
+"let &runtimepath.=',' . expand("$HOME") . '/personal/harpoon/master'
+"let &runtimepath.=',' . expand("$HOME") . '/personal/vim-with-me/ui'
+"let &runtimepath.=',' . expand("$HOME") . '/personal/git-worktree.nvim/master'
+"let &runtimepath.=',' . expand("$HOME") . '/personal/refactoring.nvim/get-locals'
+
 let mapleader = " "
 set t_Co=256
 colorscheme gruvbox
@@ -321,6 +333,17 @@ nnoremap <Leader>= :vertical resize +20<CR>
 nnoremap <Leader>- :vertical resize -20<CR>
 
 lua << EOF
+-- require('telescope').setup {
+--   extensions = {
+--     fzf = {
+--       override_generic_sorter = false, -- override the generic sorter
+--       override_file_sorter = true,     -- override the file sorter
+--       case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+--                                        -- the default case_mode is "smart_case"
+--     }
+--   }
+-- }
+-- require('telescope').load_extension('fzf')
 
  local actions = require('telescope.actions')
  require('telescope').setup {
