@@ -5,6 +5,7 @@ set guioptions=ac
 set history=100
 set guicursor=
 set autochdir
+set cursorline
 
 set splitright
 set relativenumber
@@ -53,6 +54,16 @@ set wildignore+=**/.git/*
 
 call plug#begin('~/.vim/plugged')
 
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+" For vsnip users.
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
+
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -60,7 +71,6 @@ Plug 'gruvbox-community/gruvbox'
 Plug 'simrat39/symbols-outline.nvim'
 
 Plug 'nvim-lua/lsp_extensions.nvim'
-Plug 'neovim/nvim-lspconfig'
 
 Plug 'dyng/ctrlsf.vim'
 Plug 'ryanoasis/vim-devicons'
@@ -83,15 +93,18 @@ Plug 'prettier/vim-prettier', {
 Plug 'ThePrimeagen/git-worktree.nvim'
 "Plug 'jremmen/vim-ripgrep'
 
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nvim-treesitter/playground'
+"Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+"Plug 'nvim-treesitter/playground'
 
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 
-Plug 'alvan/vim-closetag'
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
+Plug 'neovim/nvim-lspconfig'
 
-Plug 'hrsh7th/nvim-compe'
+Plug 'alvan/vim-closetag'
+Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
 Plug 'glepnir/lspsaga.nvim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'theprimeagen/vim-be-good'
@@ -102,6 +115,7 @@ Plug 'nvim-telescope/telescope-fzy-native.nvim'
 call plug#end()
 
 "lua <<EOF
+"EOF
 "vim.cmd 'packadd paq-nvim'
 "local paq = require('paq-nvim').paq
 "paq { 'nvim-telescope/telescope-fzy-native.nvim', run='git submodule update --init --recursive' }
@@ -173,8 +187,6 @@ nmap <C-w>- <Plug>(golden_ratio_resize)
 " Fill screen with current window.
 nnoremap <C-w>+ <C-w><Bar><C-w>_
 
-"lua require'lspconfig'.tsserver.setup{}
-"lua require'lspconfig'.tsserver.setup{on_attach=require'completion'.on_attach}
 
 nnoremap <C-p> :lua require('telescope.builtin').git_files()<CR>
 nnoremap <Leader>pf :lua require('telescope.builtin').find_files()<CR>
@@ -203,29 +215,24 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standar
 let g:ctrlp_working_path_mode = 'ra'
 nnoremap <Leader>nh :noh<CR>
 
-lua require'nvim-treesitter.configs'.setup{
-  \ highlight = {
-  \   enable = true,
-  \   custom_captures = {
-  \     ["foo.bar"] = "Identifier",
-  \   },
-  \ },
-  \ ensure_installed = {"python", "lua", "yaml", "json", "javascript", "bash"},
-  \textobjects = { enable = true },
-  \incremental_selection = { enable = true },
-  \indent = {
-  \  enable = true
-  \ }
-\}
+"lua require'nvim-treesitter.configs'.setup{
+"  \ highlight = {
+"  \   enable = true,
+"  \   custom_captures = {
+"  \     ["foo.bar"] = "Identifier",
+"  \   },
+"  \ },
+"  \ ensure_installed = {"python", "lua", "yaml", "json", "javascript", "bash"},
+"  \textobjects = { enable = true },
+"  \incremental_selection = { enable = true },
+"  \indent = {
+"  \  enable = true
+"  \ }
+"\}
 
 highlight TSVariable ctermfg=yellow
 
-lua <<EOF
-local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
-parser_config.typescript.used_by = "javascriptflow"
-EOF
 
-set cursorline
 
 let g:closetag_filenames = "*.jsx,*.js"
 let g:closetag_xhtml_filenames = '*.jsx,*.js'
@@ -247,7 +254,7 @@ nnoremap <C-l> <C-w>l
 
 set list
 set lcs=tab:->,eol:↵,nbsp:&
-"¶
+
 nnoremap <Leader>b :ls<CR>:b<Space>
 
 let g:symbols_outline = {
@@ -268,65 +275,6 @@ let g:symbols_outline = {
 
 nnoremap <Leader>sb :SymbolsOutline<CR>
 
-inoremap <silent><expr> <C-Space> compe#complete()
-inoremap <silent><expr> <CR>      compe#confirm('<CR>')
-inoremap <silent><expr> <C-e>     compe#close('<C-e>')
-inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
-inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
-
-let g:compe = {}
-let g:compe.enabled = v:true
-let g:compe.autocomplete = v:true
-let g:compe.debug = v:false
-let g:compe.min_length = 1
-let g:compe.preselect = 'enable'
-let g:compe.throttle_time = 80
-let g:compe.source_timeout = 200
-let g:compe.incomplete_delay = 400
-let g:compe.max_abbr_width = 100
-let g:compe.max_kind_width = 100
-let g:compe.max_menu_width = 100
-let g:compe.documentation = v:true
-
-let g:compe.source = {}
-let g:compe.source.path = v:true
-let g:compe.source.buffer = v:true
-let g:compe.source.calc = v:true
-let g:compe.source.nvim_lsp = v:true
-let g:compe.source.nvim_lua = v:true
-let g:compe.source.vsnip = v:true
-let g:compe.source.ultisnips = v:true
-
-lua << EOF
-local nvim_lsp = require('lspconfig')
-
--- Use an on_attach function to only map the following keys 
--- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
-  --Enable completion triggered by <c-x><c-o>
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-  -- Mappings.
-  local opts = { noremap=true, silent=true }
-
-  buf_set_keymap('n', '<Leader>ld',"lua require'lspsaga.diagnostic'.show_line_diagnostic()<CR>", opts)
-  buf_set_keymap('n', '<Leader>c]',"<cmd> lua vim.lsp.buf.definition()<CR>", opts)
-  buf_set_keymap('n', 'K',"<cmd>lua require'lspsaga.hover'.render_hover_doc()<CR>", opts)
-  buf_set_keymap('n', 'gd',"<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
-
-end
-
--- Use a loop to conveniently call 'setup' on multiple servers and
--- map buffer local keybindings when the language server attaches
-local servers = { "tsserver" }
-for _, lsp in ipairs(servers) do
-  nvim_lsp[lsp].setup { on_attach = on_attach }
-end
-EOF
-
 highlight link LspSagaFinderSelection Search
 
 nnoremap <Leader>= :vertical resize +20<CR>
@@ -344,6 +292,13 @@ lua << EOF
 --   }
 -- }
 -- require('telescope').load_extension('fzf')
+
+ require"mason".setup()
+ require"mason-lspconfig".setup()
+
+ local lspconfig = require('lspconfig')
+ lspconfig.tsserver.setup{}
+ lspconfig.custom_elements_ls.setup{}
 
  local actions = require('telescope.actions')
  require('telescope').setup {
@@ -373,52 +328,85 @@ lua << EOF
  require('telescope').load_extension('fzy_native')
 EOF
 
-lua << EOF
-local t = function(str)
-  return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
-
-local check_back_space = function()
-    local col = vim.fn.col('.') - 1
-    if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
-        return true
-    else
-        return false
-    end
-end
-
--- Use (s-)tab to:
---- move to prev/next item in completion menuone
---- jump to prev/next snippet's placeholder
-_G.tab_complete = function()
-  if vim.fn.pumvisible() == 1 then
-    return t "<C-n>"
-  elseif vim.fn.call("vsnip#available", {1}) == 1 then
-    return t "<Plug>(vsnip-expand-or-jump)"
-  elseif check_back_space() then
-    return t "<Tab>"
-  else
-    return vim.fn['compe#complete']()
-  end
-end
-_G.s_tab_complete = function()
-  if vim.fn.pumvisible() == 1 then
-    return t "<C-p>"
-  elseif vim.fn.call("vsnip#jumpable", {-1}) == 1 then
-    return t "<Plug>(vsnip-jump-prev)"
-  else
-    -- If <S-Tab> is not working in your terminal, change it to <C-h>
-    return t "<S-Tab>"
-  end
-end
-
-vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
-vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
-vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-EOF
 
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
+lua <<EOF
+  -- Set up nvim-cmp.
+  local cmp = require'cmp'
+cmp.setup {
+  sources = {
+    { name = 'vsnip' }
+  }
+}
+
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+         require('luasnip').lsp_expand(args.body) 
+        -- For `luasnip` users.
+        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      end,
+    },
+    window = {
+      -- completion = cmp.config.window.bordered(),
+      -- documentation = cmp.config.window.bordered(),
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.abort(),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    }),
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      { name = 'vsnip' }, -- For vsnip users.
+      -- { name = 'luasnip' }, -- For luasnip users.
+      -- { name = 'ultisnips' }, -- For ultisnips users.
+      -- { name = 'snippy' }, -- For snippy users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Set configuration for specific filetype.
+  cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+      { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline({ '/', '?' }, {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+
+  -- Set up lspconfig.
+  local capabilities = require('cmp_nvim_lsp').default_capabilities()
+  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+  require('lspconfig')['<YOUR_LSP_SERVER>'].setup {
+    capabilities = capabilities
+  }
+EOF
