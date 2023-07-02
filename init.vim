@@ -64,6 +64,10 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 
+" For ultisnips users.
+Plug 'SirVer/ultisnips'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -108,30 +112,13 @@ Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
 Plug 'glepnir/lspsaga.nvim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'theprimeagen/vim-be-good'
-"Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
-"Plug 'ThePrimeagen/harpoon'
 
 call plug#end()
-
-"lua <<EOF
-"EOF
-"vim.cmd 'packadd paq-nvim'
-"local paq = require('paq-nvim').paq
-"paq { 'nvim-telescope/telescope-fzy-native.nvim', run='git submodule update --init --recursive' }
-"EOF
-
-" Adding local modules
-"let &runtimepath.=',' . expand("$HOME") . '/personal/harpoon/master'
-"let &runtimepath.=',' . expand("$HOME") . '/personal/vim-with-me/ui'
-"let &runtimepath.=',' . expand("$HOME") . '/personal/git-worktree.nvim/master'
-"let &runtimepath.=',' . expand("$HOME") . '/personal/refactoring.nvim/get-locals'
 
 let mapleader = " "
 set t_Co=256
 colorscheme gruvbox
-"lua require("theprimeagen")
-"highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 let g:gruvbox_contrast_dark = 'hard'
 
@@ -232,8 +219,6 @@ nnoremap <Leader>nh :noh<CR>
 
 highlight TSVariable ctermfg=yellow
 
-
-
 let g:closetag_filenames = "*.jsx,*.js"
 let g:closetag_xhtml_filenames = '*.jsx,*.js'
 let g:closetag_emptyTags_caseSensitive = 1
@@ -281,17 +266,6 @@ nnoremap <Leader>= :vertical resize +20<CR>
 nnoremap <Leader>- :vertical resize -20<CR>
 
 lua << EOF
--- require('telescope').setup {
---   extensions = {
---     fzf = {
---       override_generic_sorter = false, -- override the generic sorter
---       override_file_sorter = true,     -- override the file sorter
---       case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
---                                        -- the default case_mode is "smart_case"
---     }
---   }
--- }
--- require('telescope').load_extension('fzf')
 
  require"mason".setup()
  require"mason-lspconfig".setup()
@@ -351,25 +325,59 @@ cmp.setup {
          require('luasnip').lsp_expand(args.body) 
         -- For `luasnip` users.
         -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+        vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
       end,
     },
     window = {
-      -- completion = cmp.config.window.bordered(),
-      -- documentation = cmp.config.window.bordered(),
+       completion = cmp.config.window.bordered(),
+      documentation = cmp.config.window.bordered(),
     },
-    mapping = cmp.mapping.preset.insert({
-      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-      ['<C-f>'] = cmp.mapping.scroll_docs(4),
-      ['<C-Space>'] = cmp.mapping.complete(),
-      ['<C-e>'] = cmp.mapping.abort(),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-    }),
+    mapping = {
+    ["<Tab>"] = cmp.mapping(function(fallback)
+      -- This little snippet will confirm with tab, and if no entry is selected, will confirm the first item
+      if cmp.visible() then
+        local entry = cmp.get_selected_entry()
+	if not entry then
+	  cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+	else
+	  cmp.confirm()
+	end
+      else
+        fallback()
+      end
+    end, {"i","s","c",}),
+    ["<Tab>"] = cmp.mapping({
+            c = function()
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+                else
+                    cmp.complete()
+                end
+            end,
+            i = function(fallback)
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+                elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+                    vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
+                else
+                    fallback()
+                end
+            end,
+            s = function(fallback)
+                if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+                    vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
+                else
+                    fallback()
+                end
+            end
+        }),
+    },
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
+      { name = 'path' },
       { name = 'vsnip' }, -- For vsnip users.
       -- { name = 'luasnip' }, -- For luasnip users.
-      -- { name = 'ultisnips' }, -- For ultisnips users.
+      { name = 'ultisnips' }, -- For ultisnips users.
       -- { name = 'snippy' }, -- For snippy users.
     }, {
       { name = 'buffer' },
@@ -406,7 +414,7 @@ cmp.setup {
   -- Set up lspconfig.
   local capabilities = require('cmp_nvim_lsp').default_capabilities()
   -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-  require('lspconfig')['<YOUR_LSP_SERVER>'].setup {
+  require('lspconfig')['tsserver'].setup {
     capabilities = capabilities
   }
 EOF
